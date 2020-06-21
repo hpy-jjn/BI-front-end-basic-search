@@ -7,14 +7,22 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <title>neo4jd3.js</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/neo4jd3.min.css?v=0.0.1">
     <style>
-        body,
-        html,
+        body {
+            height: 100%;
+        }
+
+        html {
+            height: 100%;
+        }
+
         .neo4jd3 {
-            height: 98%;
+            height: 95%;
             overflow: hidden;
         }
     </style>
@@ -42,7 +50,7 @@
                 }
             ]
         };
-        function init() {
+        function init(data) {
             var neo4jd3 = new Neo4jd3('#neo4jd3', {
                 highlight: [
                     {
@@ -106,8 +114,8 @@
                 //    'zoomOut': 'img/twemoji/1f50e.svg'
                 // },
                 minCollision: 60,
-                neo4jDataUrl: 'json/neo4jData.json',
-                // neo4jData:neo4jData,
+                // neo4jDataUrl: 'json/neo4jData.json',
+                neo4jData: neo4jData,
                 nodeRadius: 25,
                 onNodeClick: function (node) {
                     switch (node.id) {
@@ -127,35 +135,164 @@
                 },
                 zoomFit: true
             });
+
         }
 
-        window.onload = init;
+
+        window.onload = init(neo4jData);
+        if ($('#neo4jd3')) {
+            console.log('get!')
+        }
+        else (
+            console.log('no!')
+        )
+        console.log($('#neo4jd3').firstChild)
+
     </script>
 
     <script>
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-430863-29', 'auto');
         ga('send', 'pageview');
     </script>
-    <div class="input-group col-md-3" style="margin-top:0px positon:relative">
+    <form>
+        <div class="row form-inline">
 
-        <input type="text" class="form-control" placeholder="请输入字段名" />
+            <input type="text" id="start-node" class="form-control" placeholder="开始节点">
+            <input type="text" id="path" class="form-control" placeholder="路径">
+            <input type="text" id="end-node" class="form-control" placeholder="结束节点">
+            <input type="number" id="limit-num" class="form-control" placeholder="返回条数">
+            <button type="button" id="search" class="btn btn-primary">搜索</button>
 
-        <span class="input-group-btn">
 
-            <button class="btn btn-info btn-search">查找</button>
+        </div>
+    </form>
+    <script>
+        $("#search").click(function () {
+            // console.log('search')
+            alert("search")
+            var name1 = $("#start-node").val()
+            var path = $("#path").val()
+            var name2 = $("#end-node").val()
+            var num = $("#limit-num").val()
+            var type = num
+            if (num == "") {
+                num = 10
+            }
+            if (type == "" || type == null) {
+                type = 0
+            }
 
-            <button class="btn btn-info btn-search" style="margin-left:3px">添加</button>
+            console.log(name1)
+            console.log(path)
+            console.log(name2.length)
+            console.log(num)
+            if ((name2 == "" || name2 == null) && name1 != "" && name1 != null) {
+                // alert("one")
+                var url = "/one/entity=" + name1 + "&jump=" + path + "&limit=" + num
+                $.ajax({
+                    url: url,
 
-        </span>
+                    success: function (data) {
+                        data_new = data
+                        window.onload = init(data_new);
+                    }
+                }).fail(function () {
+                    console.log(1111)
 
-    </div>
+
+                    data_new = {
+                        "results": [
+                            {
+                                "columns": ["user", "entity"],
+                                "data": [
+                                    {
+                                        "graph": {
+                                            "nodes": [
+                                                {
+                                                    "id": "1",
+                                                    "labels": ["User"],
+                                                    "properties": {
+                                                        "userId": "eisman"
+                                                    }
+                                                },
+                                                {
+                                                    "id": "8",
+                                                    "labels": ["Project"],
+                                                    "properties": {
+                                                        "name": "neo4jd3",
+                                                        "title": "neo4jd3.js",
+                                                        "description": "Neo4j graph visualization using D3.js.",
+                                                        "url": "https://eisman.github.io/neo4jd3"
+                                                    }
+                                                }
+                                            ],
+                                            "relationships": [
+                                                {
+                                                    "id": "7",
+                                                    "type": "DEVELOPES",
+                                                    "startNode": "1",
+                                                    "endNode": "8",
+                                                    "properties": {
+                                                        "from": 1470002400000
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "errors": []
+                    }
+                    //
+
+                    console.log(neo4jd3.neo4jData)
+
+                    window.onload = init(data_new);
+                    // window.location.reload();
+                })
+            }
+            else if (name2 != "" && name2 != null) {
+                alert("two")
+                var url = "/two/name1=" + name1 + "&name2=" + name2 + "&type=" + type + "&limit=" + num
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+
+                    }
+                })
+
+            }
+
+        })
+
+
+
+          // function GetSearchNames(obj) {
+        //     $.ajax({
+        //         type:'Get',
+        //         url:'',
+        //         dataType:"json",
+        //         success:function(data){
+        //             var opstr = ""
+        //             $.each(data,function(i,val){
+        //                 opstr += "<option value=\""+val+"\">"+val+"</option>";
+        //             })
+
+
+        //         }
+        //     })
+        // }
+
+    </script>
+
 
 
 </body>
