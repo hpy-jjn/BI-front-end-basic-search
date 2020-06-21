@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <title>neo4jd3.js</title>
-    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -119,18 +119,93 @@
                 neo4jData: data,
                 nodeRadius: 25,
                 onNodeClick: function (node) {
-                    $.ajax({
+                    // var url = "/two/name1=" + name1 + "&name2=" + name2 + "&type=" + type + "&limit=" + num
+                    var name1 = node.properties.name
+                    var jump_num = 1
+                    var limit_num = 5
+                    var url = "/one/entity=" + name1 + "&jump=" + jump_num + "&limit=" + limit_num
 
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: "json",
+                        success: function (data) {
+                            var data_new = JSON.parse(data_new)
+                            var result = data_new.results.datas.graph
+                            neo4jd3.updateWithD3Data(result)
+
+
+                        }
                     })
+                    // var maxNodes = 5,
+                    //     data = neo4jd3.randomD3Data(node, maxNodes);
+                    // console.log(data)
+                    // neo4jd3.updateWithD3Data(data2);
+
                     // switch (node.id) {
                     //     case '25':
                     //         // Google
                     //         window.open(node.properties.url, '_blank');
                     //         break;
                     //     default:
-                    var maxNodes = 5,
-                        data = neo4jd3.randomD3Data(node, maxNodes);
-                    neo4jd3.updateWithD3Data(data);
+
+                    // let data1 = {
+                    //     "nodes": [
+                    //         {
+                    //             "id": "88",
+                    //             "labels": ["human"],
+                    //             "properties": {
+                    //                 "name": "neo4jd3",
+                    //             },
+                    //             // 'x':830.0197746070576,
+                    //             // 'y':200.86165821235676,
+                    //         }
+                    //     ],
+                    //     "relationships": [
+                    //         {
+                    //             "id": "7",
+                    //             "type": "DEVELOPES",
+                    //             "startNode": "1",
+                    //             "endNode": "88",
+                    //             "properties": {
+                    //                 "from": 1470002400000
+                    //             },
+                    //             "source": "1",
+                    //             "target": "88",
+                    //             "linknum": 1
+                    //         }
+                    //     ]
+                    // }
+                    // let data2 = {
+                    //     "nodes": [
+                    //         {
+                    //             "id": "87",
+                    //             "labels": ["hpy"],
+                    //             "properties": {
+                    //                 "name": "neo4jd3",
+                    //             },
+                    //             // 'x':830.0197746070576,
+                    //             // 'y':200.86165821235676,
+                    //         }
+                    //     ],
+                    //     "relationships": [
+                    //         {
+                    //             "id": "87",
+                    //             "type": "DEVELOPES",
+                    //             "startNode": "1",
+                    //             "endNode": "87",
+                    //             "properties": {
+                    //                 "from": 1470002400000
+                    //             },
+                    //             "source": "1",
+                    //             "target": "87",
+                    //             "linknum": 1
+                    //         }
+                    //     ]
+                    // }
+
+                    // neo4jd3.updateWithD3Data(data1);
                     // break;
                     // }
                 },
@@ -188,6 +263,7 @@
             console.log(path)
             console.log(name2.length)
             console.log(num)
+            //第二个名字是空且第一个名字非空则 one
             if ((name2 == "" || name2 == null) && name1 != "" && name1 != null) {
                 // alert("one")
                 var url = "/one/entity=" + name1 + "&jump=" + path + "&limit=" + num
@@ -197,62 +273,65 @@
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     success: function (data) {
-                        data_new = data
+                        var data_new = JSON.parse(data)
                         window.onload = init(data_new);
                     }
-                }).fail(function () {
-                    console.log(1111)
-                    data_new = {
-                        "results": [
-                            {
-                                "columns": ["user", "entity"],
-                                "data": [
-                                    {
-                                        "graph": {
-                                            "nodes": [
-                                                {
-                                                    "id": "1",
-                                                    "labels": ["User"],
-                                                    "properties": {
-                                                        "userId": "eisman"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "8",
-                                                    "labels": ["Project"],
-                                                    "properties": {
-                                                        "name": "neo4jd3",
-                                                        "title": "neo4jd3.js",
-                                                        "description": "Neo4j graph visualization using D3.js.",
-                                                        "url": "https://eisman.github.io/neo4jd3"
-                                                    }
-                                                }
-                                            ],
-                                            "relationships": [
-                                                {
-                                                    "id": "7",
-                                                    "type": "DEVELOPES",
-                                                    "startNode": "1",
-                                                    "endNode": "8",
-                                                    "properties": {
-                                                        "from": 1470002400000
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                ]
-                            }
-                        ],
-                        "errors": []
-                    }
-
-                    window.onload = init(data_new);
-                    // window.location.reload();
                 })
+                //     .fail(function () {
+                //         console.log(1111)
+                //         data_new = {
+                //             "results": [
+                //                 {
+                //                     "columns": ["user", "entity"],
+                //                     "data": [
+                //                         {
+                //                             "graph": {
+                //                                 "nodes": [
+                //                                     {
+                //                                         "id": "1",
+                //                                         "labels": ["User"],
+                //                                         "properties": {
+                //                                             "userId": "eisman"
+                //                                         }
+                //                                     },
+                //                                     {
+                //                                         "id": "8",
+                //                                         "labels": ["Project"],
+                //                                         "properties": {
+                //                                             "name": "neo4jd3",
+                //                                             "title": "neo4jd3.js",
+                //                                             "description": "Neo4j graph visualization using D3.js.",
+                //                                             "url": "https://eisman.github.io/neo4jd3"
+                //                                         }
+                //                                     }
+                //                                 ],
+                //                                 "relationships": [
+                //                                     {
+                //                                         "id": "7",
+                //                                         "type": "DEVELOPES",
+                //                                         "startNode": "1",
+                //                                         "endNode": "8",
+                //                                         "properties": {
+                //                                             "from": 1470002400000
+                //                                         }
+                //                                     }
+                //                                 ]
+                //                             }
+                //                         }
+                //                     ]
+                //                 }
+                //             ],
+                //             "errors": []
+                //         }
+
+                //         window.onload = init(data_new);
+                //         // window.location.reload();
+                //     })
             }
+            // 第一、二个名字都非空，则two，type=0最短 type=-1全部
             else if (name2 != "" && name2 != null) {
                 alert("two")
+
                 var url = "/two/name1=" + name1 + "&name2=" + name2 + "&type=" + type + "&limit=" + num
                 $.ajax({
                     type: "GET",
@@ -260,7 +339,7 @@
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     success: function (data) {
-                        data_new = data
+                        var data_new = JSON.parse(data_new)
                         window.onload = init(data_new)
 
                     }
